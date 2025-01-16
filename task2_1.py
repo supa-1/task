@@ -34,15 +34,23 @@ while(True):
     res = cv2.bitwise_and(frame,frame, mask= mask)
     contours,hierarchy = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     similar = []
+    
     for contour in contours:
         M = cv2.moments(contour)
         if M["m00"] > 0:
+            # 计算轮廓中心
             cX = int(M["m10"] / M["m00"])
             cY = int(M["m01"] / M["m00"])
             cv2.circle(res, (cX, cY), 5, (255, 255, 255), -1)
-            similar.append(contour)
-            # num = cv2.mean(frame, mask=mask)
-            # cv2.putText(res, f'{num}', (cX - 20, cY - 20), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
+            approx = cv2.approxPolyDP(contour, 0.01*cv2.arcLength(contour, True), closed=True)
+            
+            if len(approx) in range(5,10):
+                similar.append(contour)
+                
+            
+    black = np.zeros(frame.shape[:2], np.uint8)
+    mask = cv2.drawContours(black, similar, -1, (255), thickness=cv2.FILLED)
+    res = cv2.bitwise_and(frame, frame, mask=mask)
     res = cv2.drawContours(res, similar, -1, (0,255,0), 3)
     cv2.imshow('frame',frame)
     cv2.imshow('mask',mask)
