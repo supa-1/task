@@ -5,7 +5,7 @@ import math
 def distance(a,b):
     return ((a[0] - b[0])**2 + (a[1] - b[1])**2)**0.5
 
-frame = cv2.imread('pic2.jpg')
+frame = cv2.imread('pic4.png')
 (h, w) = frame.shape[:2]
 
 frame = cv2.resize(frame, (w//4, h//4))
@@ -40,14 +40,15 @@ cv2.line(frame, center, top, (255, 255, 255), 3)
 basic_vertix = (center[0] - top[0], center[1] - top[1])
 # nomal basic_vertix should be (0,x)
 angle = basic_vertix[1] / ((basic_vertix[0]**2 + basic_vertix[1]**2)**0.5)
-angle = math.acos(angle)
 rotated_vertix = (basic_vertix[0]*math.cos(angle) - basic_vertix[1]*math.sin(angle), basic_vertix[0]*math.sin(angle) + basic_vertix[1]*math.cos(angle)) 
-if rotated_vertix[0] > 0.1:
+angle = math.acos(angle)
+if basic_vertix[0] > 0:
     angle = 2 * math.pi - angle
     angle = angle*180/math.pi
     
 else:
     angle = angle*180/math.pi
+    
 
 (h, w) = frame.shape[:2]
 m = cv2.getRotationMatrix2D((w//2,h//2), angle, 1) 
